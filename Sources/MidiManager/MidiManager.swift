@@ -72,11 +72,11 @@ public class MidiManager: ObservableObject {
         }
     }
     
-    func sendNoteOnMessage(noteNumber: MIDINoteNumber, velocity: MIDIVelocity) {
+    public func sendNoteOnMessage(noteNumber: MIDINoteNumber, velocity: MIDIVelocity) {
         midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
     }
     
-    func sendNoteOffMessage(noteNumber: MIDINoteNumber) {
+    public func sendNoteOffMessage(noteNumber: MIDINoteNumber) {
         midi.sendNoteOffMessage(noteNumber: noteNumber, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
     }
 }
