@@ -32,6 +32,7 @@ public class MidiManager: ObservableObject {
     
     public func togglePortConnection(_ port: MidiPort) {
         port.isConnected ? disconnectPort(port: port) : connectPort(port: port)
+        self.objectWillChange.send()
     }
     
     public func connectPort(port: MidiPort) {
