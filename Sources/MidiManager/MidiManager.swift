@@ -12,6 +12,8 @@ public class MidiManager: ObservableObject {
     public var noteOnHandler: ((_ noteNumber: MIDINoteNumber,_ velocity: MIDIVelocity,_ channel: MIDIChannel,_ portID: MIDIUniqueID?,_ timeStamp: MIDITimeStamp?) -> Void)?
     public var noteOffHandler: ((_ noteNumber: MIDINoteNumber,_ velocity: MIDIVelocity,_ channel: MIDIChannel,_ portID: MIDIUniqueID?,_ timeStamp: MIDITimeStamp?) -> Void)?
     
+    public var shouldPrintLogToConsole: Bool = false
+    
     public init(isPreview: Bool = false) {
         if !isPreview {
             startMIDI()
@@ -74,10 +76,41 @@ public class MidiManager: ObservableObject {
     
     public func sendNoteOnMessage(noteNumber: MIDINoteNumber, velocity: MIDIVelocity) {
         midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
+        if shouldPrintLogToConsole {
+            logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, midiIOType: .sentNoteOn)
+        }
     }
     
     public func sendNoteOffMessage(noteNumber: MIDINoteNumber) {
         midi.sendNoteOffMessage(noteNumber: noteNumber, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
+        if shouldPrintLogToConsole {
+            logMidiIO(noteNumber: noteNumber, velocity: 0, channel: outputChannel, midiIOType: .sentNoteOff)
+        }
+    }
+    
+    func logMidiIO(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, midiIOType: MidiNoteIOType) {
+        let isNoteOff = (midiIOType == .receivedNoteOff || midiIOType == .sentNoteOff)
+        print("---------------------")
+        print(midiIOType.description)
+        print("MidiManager DEBUG LOG: note \(noteNumber) -\(!isNoteOff ? " velocity \(velocity) -" : "") channel \(channel)")
+        print("---------------------")
+    }
+}
+
+enum MidiNoteIOType {
+    case receivedNoteOn, receivedNoteOff, sentNoteOn, sentNoteOff
+
+    var description: String {
+        switch self {
+        case .receivedNoteOn:
+            return "Received Note On"
+        case .receivedNoteOff:
+            return "Received Note Off"
+        case .sentNoteOn:
+            return "Sent Note On"
+        case .sentNoteOff:
+            return "Sent Note Off"
+        }
     }
 }
 
@@ -92,11 +125,17 @@ extension MidiManager: MIDIListener {
         if let handler = noteOnHandler {
             handler(noteNumber, velocity, channel, portID, timeStamp)
         }
+        if shouldPrintLogToConsole {
+            logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: channel, midiIOType: .receivedNoteOn)
+        }
     }
     
     public func receivedMIDINoteOff(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, portID: MIDIUniqueID?, timeStamp: MIDITimeStamp?) {
         if let handler = noteOffHandler {
             handler(noteNumber, velocity, channel, portID, timeStamp)
+        }
+        if shouldPrintLogToConsole {
+            logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: channel, midiIOType: .receivedNoteOff)
         }
     }
     
