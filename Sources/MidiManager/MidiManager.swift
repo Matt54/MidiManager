@@ -2,7 +2,7 @@ import AudioKit
 import CoreMIDI
 import UtilityAndBeyond
 
-public class MidiManager {
+public class MidiManager: ObservableObject {
     public let midi = MIDI()
     @Published public var inputPorts = [MidiPort]()
     @Published public var outputPorts = [MidiPort]()
