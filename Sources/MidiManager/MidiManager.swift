@@ -32,7 +32,6 @@ public class MidiManager: ObservableObject {
     
     public func togglePortConnection(_ port: MidiPort) {
         port.isConnected ? disconnectPort(port: port) : connectPort(port: port)
-        self.objectWillChange.send()
     }
     
     public func connectPort(port: MidiPort) {
@@ -76,17 +75,17 @@ public class MidiManager: ObservableObject {
     }
     
     public func sendNoteOnMessage(noteNumber: MIDINoteNumber, velocity: MIDIVelocity) {
-        midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
         if shouldPrintLogToConsole {
             logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, midiIOType: .sentNoteOn)
         }
+        midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
     }
     
     public func sendNoteOffMessage(noteNumber: MIDINoteNumber) {
-        midi.sendNoteOffMessage(noteNumber: noteNumber, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
         if shouldPrintLogToConsole {
             logMidiIO(noteNumber: noteNumber, velocity: 0, channel: outputChannel, midiIOType: .sentNoteOff)
         }
+        midi.sendNoteOffMessage(noteNumber: noteNumber, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
     }
     
     func logMidiIO(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, midiIOType: MidiNoteIOType) {
@@ -123,20 +122,20 @@ extension MidiManager: MIDIListener {
     }
     
     public func receivedMIDINoteOn(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, portID: MIDIUniqueID?, timeStamp: MIDITimeStamp?) {
-        if let handler = noteOnHandler {
-            handler(noteNumber, velocity, channel, portID, timeStamp)
-        }
         if shouldPrintLogToConsole {
             logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: channel, midiIOType: .receivedNoteOn)
+        }
+        if let handler = noteOnHandler {
+            handler(noteNumber, velocity, channel, portID, timeStamp)
         }
     }
     
     public func receivedMIDINoteOff(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, portID: MIDIUniqueID?, timeStamp: MIDITimeStamp?) {
-        if let handler = noteOffHandler {
-            handler(noteNumber, velocity, channel, portID, timeStamp)
-        }
         if shouldPrintLogToConsole {
             logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: channel, midiIOType: .receivedNoteOff)
+        }
+        if let handler = noteOffHandler {
+            handler(noteNumber, velocity, channel, portID, timeStamp)
         }
     }
     
@@ -186,6 +185,7 @@ extension MidiManager: MIDIListener {
 
         // remove any port that is no longer available
         inputPorts = inputPorts.filter { item in midi.inputUIDs.contains(where: { $0 == item.id }) }
+        outputPorts = outputPorts.filter { item in midi.destinationUIDs.contains(where: { $0 == item.id }) }
     }
     
     public func receivedMIDIPropertyChange(propertyChangeInfo: MIDIObjectPropertyChangeNotification) {}

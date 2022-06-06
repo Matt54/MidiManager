@@ -14,8 +14,8 @@ public struct MidiPort: Identifiable {
         self.isInput = isInput
     }
     
-    public static func getMockPort() -> MidiPort {
+    public static func getMockPort(isConnected: Bool = false, isInput: Bool = true) -> MidiPort {
         let randomId = Int32.random(in: 1000000000...1999999999)
-        return MidiPort(midiUniqueID: -randomId, name: "Mock Port Name")
+        return MidiPort(midiUniqueID: -randomId, name: "Mock Port Name", isConnected: isConnected, isInput: isInput)
     }
 }
