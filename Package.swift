@@ -17,7 +17,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/AudioKit/AudioKit", branch:"develop"),
+        .package(url: "https://github.com/AudioKit/AudioKit", branch:"main"),
         .package(url: "https://github.com/Matt54/UtilityAndBeyond.git", branch:"main")
     ],
     targets: [
