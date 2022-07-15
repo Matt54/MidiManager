@@ -74,18 +74,18 @@ public class MidiManager: ObservableObject {
         }
     }
     
-    public func sendNoteOnMessage(noteNumber: MIDINoteNumber, velocity: MIDIVelocity) {
+    public func sendNoteOnMessage(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, time: MIDITimeStamp = mach_absolute_time()) {
         if shouldPrintLogToConsole {
             logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, midiIOType: .sentNoteOn)
         }
-        midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
+        midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, time: time, virtualOutputPorts: midi.virtualOutputs)
     }
     
-    public func sendNoteOffMessage(noteNumber: MIDINoteNumber) {
+    public func sendNoteOffMessage(noteNumber: MIDINoteNumber, time: MIDITimeStamp = mach_absolute_time()) {
         if shouldPrintLogToConsole {
             logMidiIO(noteNumber: noteNumber, velocity: 0, channel: outputChannel, midiIOType: .sentNoteOff)
         }
-        midi.sendNoteOffMessage(noteNumber: noteNumber, channel: outputChannel, virtualOutputPorts: midi.virtualOutputs)
+        midi.sendNoteOffMessage(noteNumber: noteNumber, channel: outputChannel, time: time, virtualOutputPorts: midi.virtualOutputs)
     }
     
     func logMidiIO(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, midiIOType: MidiNoteIOType) {
