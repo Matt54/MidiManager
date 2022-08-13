@@ -6,7 +6,7 @@
       "location" : "https://github.com/AudioKit/AudioKit",
       "state" : {
         "branch" : "main",
-        "revision" : "94b3dc43fe4e599de2f7c3c8d5745bd072bf1c3a"
+        "revision" : "ca98ae3f774d0ba155f1229f4dec96b80a5f5f69"
       }
     },
     {
@@ -15,7 +15,7 @@
       "location" : "https://github.com/Matt54/UtilityAndBeyond.git",
       "state" : {
         "branch" : "main",
-        "revision" : "f8dde410c12d29a7a9aa5d99272a7444e374a819"
+        "revision" : "c10a25ee43b08ff183801c4ba36a48866fb5c533"
       }
     }
   ],
