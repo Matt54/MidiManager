@@ -88,6 +88,10 @@ public class MidiManager: ObservableObject {
         midi.sendNoteOffMessage(noteNumber: noteNumber, channel: outputChannel, time: time, virtualOutputPorts: midi.virtualOutputs)
     }
     
+    public func sendCCMessage(control: MIDIByte, value: MIDIByte, channel: MIDIChannel = 0) {
+        midi.sendControllerMessage(control, value: value, channel: channel, virtualOutputPorts: midi.virtualOutputs)
+    }
+    
     func logMidiIO(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, midiIOType: MidiNoteIOType) {
         let isNoteOff = (midiIOType == .receivedNoteOff || midiIOType == .sentNoteOff)
         print("---------------------")
@@ -177,9 +181,9 @@ extension MidiManager: MIDIListener {
                 outputPorts.append(newPort)
                 
                 // connect right away if we were previously connected
-                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: destinationUID, isInput: false) {
+//                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: destinationUID, isInput: false) {
                     connectPort(port: newPort)
-                }
+//                }
             }
         }
 
