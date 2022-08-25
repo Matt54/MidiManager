@@ -74,11 +74,11 @@ public class MidiManager: ObservableObject {
         }
     }
     
-    public func sendNoteOnMessage(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, time: MIDITimeStamp = mach_absolute_time()) {
+    public func sendNoteOnMessage(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel? = nil, time: MIDITimeStamp = mach_absolute_time()) {
         if shouldPrintLogToConsole {
-            logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, midiIOType: .sentNoteOn)
+            logMidiIO(noteNumber: noteNumber, velocity: velocity, channel: channel ?? outputChannel, midiIOType: .sentNoteOn)
         }
-        midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: outputChannel, time: time, virtualOutputPorts: midi.virtualOutputs)
+        midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: channel ?? outputChannel, time: time, virtualOutputPorts: midi.virtualOutputs)
     }
     
     public func sendNoteOffMessage(noteNumber: MIDINoteNumber, time: MIDITimeStamp = mach_absolute_time()) {
@@ -166,9 +166,9 @@ extension MidiManager: MIDIListener {
                 inputPorts.append(newPort)
                 
                 // connect right away if we were previously connected
-                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: inputUID) {
+//                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: inputUID) {
                     connectPort(port: newPort)
-                }
+//                }
             }
         }
 
