@@ -1,8 +1,11 @@
 import AudioKit
 import CoreMIDI
 import UtilityAndBeyond
+import SwiftUI
 
 public class MidiManager: ObservableObject {
+    @Environment(\.isPreview) var isPreview
+    
     public let midi = MIDI()
     @Published public var inputPorts = [MidiPort]()
     @Published public var outputPorts = [MidiPort]()
@@ -14,7 +17,7 @@ public class MidiManager: ObservableObject {
     
     public var shouldPrintLogToConsole: Bool = false
     
-    public init(isPreview: Bool = false) {
+    public init() {
         if !isPreview {
             startMIDI()
         }
@@ -166,9 +169,9 @@ extension MidiManager: MIDIListener {
                 inputPorts.append(newPort)
                 
                 // connect right away if we were previously connected
-//                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: inputUID) {
+                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: inputUID) {
                     connectPort(port: newPort)
-//                }
+                }
             }
         }
 
@@ -181,9 +184,9 @@ extension MidiManager: MIDIListener {
                 outputPorts.append(newPort)
                 
                 // connect right away if we were previously connected
-//                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: destinationUID, isInput: false) {
+                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: destinationUID, isInput: false) {
                     connectPort(port: newPort)
-//                }
+                }
             }
         }
 
