@@ -23,6 +23,14 @@ public class MidiManager: ObservableObject {
         }
     }
     
+    public convenience init(withMockPorts: Bool) {
+        self.init()
+        if withMockPorts {
+            inputPorts = [MidiPort.getMockPort(isConnected: false, isInput: true), MidiPort.getMockPort(isConnected: true, isInput: true)]
+            outputPorts = [MidiPort.getMockPort(isConnected: false, isInput: false), MidiPort.getMockPort(isConnected: true, isInput: false)]
+        }
+    }
+    
     public func startMIDI() {
         midi.addListener(self)
         
