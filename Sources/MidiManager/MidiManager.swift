@@ -17,6 +17,9 @@ public class MidiManager: ObservableObject {
     
     public var shouldPrintLogToConsole: Bool = false
     
+    /// determines if a new input will be automatically connected to
+    public var shouldConnectInputsAutomatically: Bool = true
+    
     public init() {
         if !isPreview {
             startMIDI()
@@ -59,9 +62,7 @@ public class MidiManager: ObservableObject {
                 print("connected output port: " + port.name)
             }
             
-            if !MidiPortDefaultsManager.getDefaultConnectionForPort(id: port.midiUniqueID) {
-                MidiPortDefaultsManager.setDefaultConnectionForPort(id: port.midiUniqueID, isOn: true , isInput: port.isInput)
-            }
+            MidiPortDefaultsManager.setDefaultConnectionForPort(id: port.midiUniqueID, isOn: true , isInput: port.isInput)
         }
     }
     
@@ -79,9 +80,7 @@ public class MidiManager: ObservableObject {
                 print("disconnected output port: " + port.name)
             }
             
-            if !MidiPortDefaultsManager.getDefaultConnectionForPort(id: port.midiUniqueID) {
-                MidiPortDefaultsManager.setDefaultConnectionForPort(id: port.midiUniqueID, isOn: false , isInput: port.isInput)
-            }
+            MidiPortDefaultsManager.setDefaultConnectionForPort(id: port.midiUniqueID, isOn: false , isInput: port.isInput)
         }
     }
     
@@ -109,6 +108,15 @@ public class MidiManager: ObservableObject {
         print(midiIOType.description)
         print("MidiManager DEBUG LOG: note \(noteNumber) -\(!isNoteOff ? " velocity \(velocity) -" : "") channel \(channel)")
         print("---------------------")
+    }
+    
+    public func removeConnectedPortsFromUserDefaults() {
+        for port in inputPorts {
+            MidiPortDefaultsManager.removePortDefault(id: port.midiUniqueID, isInput: true)
+        }
+        for port in outputPorts {
+            MidiPortDefaultsManager.removePortDefault(id: port.midiUniqueID, isInput: false)
+        }
     }
 }
 
@@ -176,8 +184,12 @@ extension MidiManager: MIDIListener {
                 let newPort = MidiPort(midiUniqueID: inputUID, name: name)
                 inputPorts.append(newPort)
                 
-                // connect right away if we were previously connected
-                if MidiPortDefaultsManager.getDefaultConnectionForPort(id: inputUID) {
+                var shouldConnectAutomatically = shouldConnectInputsAutomatically
+                if MidiPortDefaultsManager.doesKeyExistForPort(id: newPort.midiUniqueID, isInput: true) {
+                    shouldConnectAutomatically = MidiPortDefaultsManager.getDefaultConnectionForPort(id: newPort.midiUniqueID, isInput: true)
+                }
+                
+                if shouldConnectAutomatically {
                     connectPort(port: newPort)
                 }
             }
