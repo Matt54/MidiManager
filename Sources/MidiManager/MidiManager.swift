@@ -20,7 +20,12 @@ public class MidiManager: ObservableObject {
     /// determines if a new input will be automatically connected to
     public var shouldConnectInputsAutomatically: Bool = true
     
-    public init() {
+    private var shouldOpenPorts: Bool
+    
+    ///  shouldOpenPorts determines if openInput/openOutput is called in startMIDI (required for bluetooth)
+    ///  - defaulting to false until it is proven to be a good idea for Chordable
+    public init(shouldOpenPorts: Bool = false) {
+        self.shouldOpenPorts = shouldOpenPorts
         if !isPreview {
             startMIDI()
         }
@@ -38,6 +43,11 @@ public class MidiManager: ObservableObject {
         midi.addListener(self)
         
         let appName = Bundle.main.displayName
+        
+        if shouldOpenPorts {
+            midi.openInput()
+            midi.openOutput()
+        }
         
         // this is what shows up in Ableton
         midi.createVirtualInputPorts(names: [appName ?? "AudioKit"])
