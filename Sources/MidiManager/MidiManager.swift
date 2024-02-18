@@ -101,11 +101,11 @@ public class MidiManager: ObservableObject {
         midi.sendNoteOnMessage(noteNumber: noteNumber, velocity: velocity, channel: channel ?? outputChannel, time: time, virtualOutputPorts: midi.virtualOutputs)
     }
     
-    public func sendNoteOffMessage(noteNumber: MIDINoteNumber, time: MIDITimeStamp = mach_absolute_time()) {
+    public func sendNoteOffMessage(noteNumber: MIDINoteNumber, channel: MIDIChannel? = nil, time: MIDITimeStamp = mach_absolute_time()) {
         if shouldPrintLogToConsole {
-            logMidiIO(noteNumber: noteNumber, velocity: 0, channel: outputChannel, midiIOType: .sentNoteOff)
+            logMidiIO(noteNumber: noteNumber, velocity: 0, channel: channel ?? outputChannel, midiIOType: .sentNoteOff)
         }
-        midi.sendNoteOffMessage(noteNumber: noteNumber, channel: outputChannel, time: time, virtualOutputPorts: midi.virtualOutputs)
+        midi.sendNoteOffMessage(noteNumber: noteNumber, channel: channel ?? outputChannel, time: time, virtualOutputPorts: midi.virtualOutputs)
     }
     
     public func sendCCMessage(control: MIDIByte, value: MIDIByte, channel: MIDIChannel = 0) {
